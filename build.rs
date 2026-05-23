@@ -6,6 +6,7 @@ fn main() {
     );
 
     let out_dir = PathBuf::from(env::var_os("OUT_DIR").unwrap());
+
     let bios_img = out_dir.join("plum-bios.img");
 
     bootloader::BiosBoot::new(&kernel)

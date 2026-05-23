@@ -5,8 +5,10 @@ fn main() {
 
     Command::new("qemu-system-x86_64")
         .args([
+            "-machine",
+            "pc",
             "-drive",
-            &format!("format=raw,file={image}"),
+            &format!("format=raw,file={}", image),
             "-serial",
             "stdio",
             "-no-reboot",

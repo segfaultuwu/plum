@@ -9,6 +9,8 @@
 - [x] framebuffer
 - [x] BMP graphics
 - [x] allocator
-- [ ] PS/2 Keyboard
-- [ ] PSF Font
+- [x] PSF Font
+- [x] PS/2 Keyboard
+- [x] Paging
+- [x] Frame allocator
 - [ ] PNG (this is gonna be tough)

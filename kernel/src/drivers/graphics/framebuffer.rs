@@ -2,11 +2,11 @@ use bootloader_api::info::{FrameBuffer, PixelFormat};
 
 pub struct Framebuffer<'a> {
     buffer: &'a mut [u8],
-    width: usize,
-    height: usize,
-    stride: usize,
-    bytes_per_pixel: usize,
-    pixel_format: PixelFormat,
+    pub width: usize,
+    pub height: usize,
+    pub stride: usize,
+    pub bytes_per_pixel: usize,
+    pub pixel_format: PixelFormat,
 }
 
 impl<'a> Framebuffer<'a> {
