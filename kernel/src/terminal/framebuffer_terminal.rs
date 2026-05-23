@@ -1,6 +1,9 @@
 use core::fmt;
 
+use x86_64::instructions::tlb::flush;
+
 use crate::drivers::graphics::{framebuffer::Framebuffer, psf::PSF};
+use crate::flush;
 
 pub struct Terminal<'a> {
     framebuffer: &'a mut Framebuffer<'a>,
@@ -116,16 +119,27 @@ impl<'a> Terminal<'a> {
         }
 
         self.cursor_x = 0;
+        flush!();
     }
 
     pub fn set_color(&mut self, fg: u32) {
         self.fg = fg;
+        flush!();
     }
 
     pub fn clear_screen(&mut self, color: u32) {
         self.framebuffer.clear(color);
         self.cursor_x = 0;
         self.cursor_y = 0;
+        flush!();
+    }
+
+    pub fn reset(&mut self) {
+        self.fg = self.default_fg;
+        self.clear_screen(0x1E1E2E);
+        self.cursor_x = 0;
+        self.cursor_y = 0;
+        flush!();
     }
 }
 

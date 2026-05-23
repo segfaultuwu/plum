@@ -6,19 +6,33 @@ macro_rules! print {
 }
 
 #[macro_export]
-macro_rules! println {
+macro_rules! flush {
     () => {
+        unsafe {
+            if let Some(framebuffer) = $crate::FRAMEBUFFER.as_mut() {
+                framebuffer.swap_buffers();
+            }
+        }
+    };
+}
+
+#[macro_export]
+macro_rules! println {
+    () => {{
         $crate::print!("\n");
-    };
+        $crate::flush!();
+    }};
 
-    ($fmt:expr) => {
+    ($fmt:expr) => {{
         $crate::print!(concat!($fmt, "\n"));
-    };
+        $crate::flush!();
+    }};
 
-    ($fmt:expr, $($arg:tt)*) => {
+    ($fmt:expr, $($arg:tt)*) => {{
         $crate::print!(
             concat!($fmt, "\n"),
             $($arg)*
         );
-    };
+        $crate::flush!();
+    }};
 }

@@ -1,6 +1,6 @@
 use alloc::string::String;
 
-use crate::{drivers::serial::inb, print};
+use crate::{drivers::serial::inb, flush, print};
 
 const PS2_DATA_PORT: u16 = 0x60;
 const PS2_STATUS_PORT: u16 = 0x64;
@@ -78,16 +78,19 @@ pub fn read_line() -> String {
             match c {
                 '\n' => {
                     print!("\n");
+                    flush!();
                     break;
                 }
                 '\x08' => {
                     if input.pop().is_some() {
                         print!("\x08");
+                        flush!();
                     }
                 }
                 _ => {
                     input.push(c);
                     print!("{}", c);
+                    flush!();
                 }
             }
         }

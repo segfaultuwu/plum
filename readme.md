@@ -34,8 +34,8 @@ A small hobby operating system written in Rust.
 - [x] BMP rendering
 - [x] PSF fonts
 - [x] Framebuffer terminal
-- [ ] PNG decoding
-- [ ] Double buffering
+- [x] ~~PNG decoding~~ Quick OK Image
+- [x] Double buffering
 - [ ] Window manager
 - [ ] Hardware acceleration
 

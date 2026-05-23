@@ -37,7 +37,7 @@ pub static BOOTLOADER_CONFIG: BootloaderConfig = {
 entry_point!(kernel_main, config = &BOOTLOADER_CONFIG);
 
 const HEAP_START: usize = 0x_4444_4444_0000;
-const HEAP_SIZE: usize = 100 * 1024;
+const HEAP_SIZE: usize = 8 * 1024 * 1024;
 
 static mut FRAMEBUFFER: Option<drivers::graphics::framebuffer::Framebuffer<'static>> = None;
 static mut FONT: Option<drivers::graphics::psf::PSF> = None;
@@ -102,6 +102,7 @@ fn init_terminal(fb: &'static mut bootloader_api::info::FrameBuffer) {
 
         let font = FONT.as_ref().unwrap();
 
+        framebuffer.swap_buffers();
         *TERMINAL.lock() = Some(Terminal::new(framebuffer, font, 0xCDD6F4));
     }
 }
@@ -120,7 +121,12 @@ fn kernel_main(boot_info: &'static mut BootInfo) -> ! {
 
     let fb = boot_info.framebuffer.as_mut().unwrap();
     init_terminal(fb);
+    let logo_data = include_bytes!("../../assets/logo.qoi");
 
+    if let Some(qoi) = drivers::graphics::qoi::Qoi::new(logo_data) {
+        qoi.draw(unsafe { &mut FRAMEBUFFER.as_mut().unwrap() }, 340, 50);
+        flush!();
+    }
     println!(
         "
 \x1b[35m _____ \x1b[34m _                 \x1b[36m  ___    ____
@@ -131,15 +137,25 @@ fn kernel_main(boot_info: &'static mut BootInfo) -> ! {
 \x1b[35m|_|\x1b[34m    |_|\\__,_|_| |_| |_|\x1b[36m\\____/|_____/
 
 \x1b[95m          PlumOS
-\x1b[94m      by segfaultowo
+\x1b[94m      by segfaultuwu
 \x1b[0m"
     );
     println!("Framebuffer terminal works.");
-    println!("Type something:");
-
     loop {
+        flush!();
+        print!("$ ");
+        flush!();
         let input = drivers::keyboard::read_line();
-        println!("You entered: {}", input);
+        if input == "clear" {
+            unsafe {
+                if let Some(framebuffer) = FRAMEBUFFER.as_mut() {
+                    TERMINAL.lock().as_mut().unwrap().reset();
+                    framebuffer.swap_buffers();
+                }
+            }
+        } else {
+            println!("You typed: {}", input);
+        }
     }
 }
 
