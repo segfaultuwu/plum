@@ -1,0 +1,1 @@
+cargo +nightly -Zjson-target-spec run
