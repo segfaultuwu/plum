@@ -1,27 +1,42 @@
 #![no_std]
 #![no_main]
 
-use bootloader_api::{BootInfo, BootloaderConfig, entry_point};
+extern crate alloc;
+
+use crate::memory::allocator::{BumpAllocator, Locked};
+use alloc::boxed::Box;
+use alloc::string::String;
+use alloc::vec::Vec;
+use bootloader_api::{BootInfo, entry_point};
 use core::panic::PanicInfo;
 
 mod drivers;
+mod memory;
 mod utils;
-
-pub static BOOTLOADER_CONFIG: BootloaderConfig = {
-    let mut config = BootloaderConfig::new_default();
-    config.frame_buffer.minimum_framebuffer_width = Some(800);
-    config.frame_buffer.minimum_framebuffer_height = Some(600);
-    config
-};
 
 entry_point!(kernel_main);
 
+#[global_allocator]
+static ALLOCATOR: Locked<BumpAllocator> = Locked::new(BumpAllocator::new());
+
 fn kernel_main(boot_info: &'static mut BootInfo) -> ! {
-    drivers::serial::init();
+    const HEAP_START: usize = 0x_4444_4444_0000;
+    const HEAP_SIZE: usize = 100 * 1024;
+
+    unsafe {
+        ALLOCATOR.lock().init(HEAP_START, HEAP_SIZE);
+    }
     drivers::serial::write("Plum booted!\n");
     let fb = boot_info.framebuffer.as_mut().unwrap();
     let mut framebuffer = drivers::graphics::framebuffer::Framebuffer::from_bootloader(fb);
     framebuffer.clear(0x1E1E2E);
+    let mut v = Vec::new();
+    v.push(1);
+    v.push(2);
+
+    let s = String::from("PlumOS");
+
+    let b = Box::new(42);
     loop {}
 }
 
