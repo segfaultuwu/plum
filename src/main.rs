@@ -1,31 +1,17 @@
-#![no_std]
-#![no_main]
+use std::process::Command;
 
-use core::panic::PanicInfo;
+fn main() {
+    let image = env!("PLUM_BIOS_IMG");
 
-mod drivers;
-mod utils;
-
-#[unsafe(no_mangle)]
-pub extern "C" fn _start() -> ! {
-    let mut vga = drivers::graphics::vga::VGA::new(
-        utils::colors::Colors::Text.to_vga(),
-        utils::colors::Colors::Surface0.to_vga(),
-    );
-    vga.clear();
-    vga.write_line("Hello, World!");
-    vga.write_line("Hello, World!");
-    vga.write_line("Hello, World!");
-
-    loop {}
-}
-
-#[panic_handler]
-fn panic(_info: &PanicInfo) -> ! {
-    let mut vga = drivers::graphics::vga::VGA::new(
-        utils::colors::Colors::Red.to_vga(),
-        utils::colors::Colors::Surface0.to_vga(),
-    );
-    vga.write_string("Kernel panic!");
-    loop {}
+    Command::new("qemu-system-x86_64")
+        .args([
+            "-drive",
+            &format!("format=raw,file={image}"),
+            "-serial",
+            "stdio",
+            "-no-reboot",
+            "-no-shutdown",
+        ])
+        .status()
+        .unwrap();
 }
