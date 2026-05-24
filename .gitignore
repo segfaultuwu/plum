@@ -2,4 +2,4 @@
 qemu.log
 /assets/logo.kra-autosave.kra
 *~
-rootfs/rootfs.img
+/rootfs/rootfs.img
