@@ -2,6 +2,11 @@
 
 A small hobby operating system written in Rust.
 
+## Creds:
+
+- Username: `root`
+- Password: `plum`
+
 ## Features
 
 - VGA text mode
@@ -48,9 +53,9 @@ A small hobby operating system written in Rust.
 
 ### Filesystems
 
-- [ ] FAT32
+- [x] FAT32
 - [ ] Initial ramdisk
-- [ ] VFS layer
+- [x] VFS layer
 - [ ] EXT2
 
 ### Processes
@@ -74,7 +79,7 @@ A small hobby operating system written in Rust.
 
 ### Userland
 
-- [ ] Shell
+- [x] Shell
 - [ ] Core utilities
 - [ ] Package manager
 - [ ] GUI applications
