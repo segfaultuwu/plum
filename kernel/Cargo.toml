@@ -13,3 +13,10 @@ bench = false
 bootloader_api = "0.11"
 spin = "0.9"
 x86_64 = "0.15.4"
+sha2 = { version = "0.10", default-features = false, features = ["force-soft"] }
+
+[profile.dev]
+panic = "abort"
+
+[profile.release]
+panic = "abort"

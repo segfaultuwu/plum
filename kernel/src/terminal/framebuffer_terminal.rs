@@ -93,6 +93,10 @@ impl<'a> Terminal<'a> {
                         }
                     }
                 }
+                b'\t' => {
+                    let spaces = 4 - (self.cursor_x / self.font.width) % 4;
+                    self.cursor_x += spaces * self.font.width;
+                }
                 byte => {
                     self.font.draw_char(
                         self.framebuffer,

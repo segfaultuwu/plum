@@ -4,7 +4,7 @@ fn main() {
     let kernel = PathBuf::from(
         env::var_os("CARGO_BIN_FILE_KERNEL_kernel").expect("missing kernel artifact"),
     );
-
+    println!("cargo:rustc-env=PLUM_ROOTFS_IMG=rootfs/rootfs.img");
     let out_dir = PathBuf::from(env::var_os("OUT_DIR").unwrap());
 
     let bios_img = out_dir.join("plum-bios.img");

@@ -5,6 +5,7 @@
 extern crate alloc;
 
 use crate::{
+    drivers::serial,
     memory::allocator::{BumpAllocator, Locked},
     terminal::framebuffer_terminal::Terminal,
 };
@@ -18,9 +19,12 @@ use x86_64::{
     VirtAddr,
 };
 
+mod crypto;
 mod drivers;
 mod memory;
+mod shell;
 mod terminal;
+mod users;
 mod utils;
 
 #[macro_use]
@@ -140,22 +144,23 @@ fn kernel_main(boot_info: &'static mut BootInfo) -> ! {
 \x1b[94m      by segfaultuwu
 \x1b[0m"
     );
-    println!("Framebuffer terminal works.");
+    let devices = drivers::disk::list();
+    for d in devices {
+        println!("Found disk: {} ({} bytes)", d.name, d.size);
+        serial::write("Found disk: ");
+        serial::write(&d.name);
+    }
+    // Initialize users from rootfs and run login screen once, then enter shell
+    drivers::serial::write("users: init_from_passwd()\n");
+    users::init_from_passwd();
+
+    drivers::serial::write("users: calling login()\n");
+    println!("-- ENTERING LOGIN FROM main.rs --");
+    users::login::login();
+    drivers::serial::write("users: returned from login()\n");
+    flush!();
     loop {
-        flush!();
-        print!("$ ");
-        flush!();
-        let input = drivers::keyboard::read_line();
-        if input == "clear" {
-            unsafe {
-                if let Some(framebuffer) = FRAMEBUFFER.as_mut() {
-                    TERMINAL.lock().as_mut().unwrap().reset();
-                    framebuffer.swap_buffers();
-                }
-            }
-        } else {
-            println!("You typed: {}", input);
-        }
+        shell::main();
     }
 }
 
