@@ -98,16 +98,12 @@ pub fn init_from_passwd() {
     // Fallback: include the rootfs /etc/passwd at compile time
     let content = include_str!("../../../rootfs/etc/passwd");
     crate::drivers::serial::write("init_from_passwd: using compile-time passwd\n");
-    let mut lock = USER_MANAGER.lock();
-    let mgr = UserManager::new();
     populate_from_str(content);
-    *lock = Some(mgr);
     crate::drivers::serial::write("init_from_passwd: finished fallback population\n");
 }
 
 fn populate_from_str(content: &str) {
     crate::drivers::serial::write("populate_from_str: start\n");
-    let mut lock = USER_MANAGER.lock();
     let mut mgr = UserManager::new();
 
     let mut count: usize = 0;
@@ -124,6 +120,7 @@ fn populate_from_str(content: &str) {
         }
     }
 
+    let mut lock = USER_MANAGER.lock();
     *lock = Some(mgr);
     crate::drivers::serial::write("populate_from_str: done. users added: ");
     crate::utils::serial_write_usize(count);

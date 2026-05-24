@@ -8,9 +8,9 @@ MOUNT="/mnt/tmprootfs_plum"
 
 echo "Creating FAT32 image: $IMAGE_PATH (${SIZE_MB} MB)"
 
-if [ "$SIZE_MB" -lt 32 ]; then
-    echo "FAT32 usually needs at least ~32 MB. Using 32 MB instead."
-    SIZE_MB=32
+if [ "$SIZE_MB" -lt 1 ]; then
+    echo "Using 1 MB as minimum."
+    SIZE_MB=1
 fi
 
 mkdir -p "$ROOTFS_DIR"
@@ -28,7 +28,7 @@ if ! command -v mkfs.vfat >/dev/null 2>&1; then
     sudo apt-get install -y dosfstools
 fi
 
-sudo mkfs.vfat -F 32 "$IMAGE_PATH"
+sudo mkfs.vfat "$IMAGE_PATH"
 
 sudo mkdir -p "$MOUNT"
 

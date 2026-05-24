@@ -144,12 +144,22 @@ fn kernel_main(boot_info: &'static mut BootInfo) -> ! {
 \x1b[94m      by segfaultuwu
 \x1b[0m"
     );
+
+    let _ = drivers::sata::discover();
+    drivers::sata::register_embedded_rootfs();
+
     let devices = drivers::disk::list();
-    for d in devices {
+    if let Some(d) = devices.first() {
         println!("Found disk: {} ({} bytes)", d.name, d.size);
         serial::write("Found disk: ");
         serial::write(&d.name);
+    } else {
+        println!("No block devices found.");
+        serial::write("No block devices found.\n");
     }
+
+    drivers::fs::vfs::auto_mount();
+
     // Initialize users from rootfs and run login screen once, then enter shell
     drivers::serial::write("users: init_from_passwd()\n");
     users::init_from_passwd();

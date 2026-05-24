@@ -203,7 +203,7 @@ impl<'a> FatVolume<'a> {
             }
 
             let next = self.next_cluster(cluster)?;
-            if next >= 0x0FFF_FFF8 || next == 0 {
+            if next >= 0x0FFF_FFF8 || next == 0 || next == cluster {
                 break;
             }
             cluster = next;
@@ -224,7 +224,7 @@ impl<'a> FatVolume<'a> {
             remaining -= take;
 
             let next = self.next_cluster(cluster)?;
-            if next >= 0x0FFF_FFF8 || next == 0 {
+            if next >= 0x0FFF_FFF8 || next == 0 || next == cluster {
                 break;
             }
             cluster = next;

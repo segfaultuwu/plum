@@ -31,7 +31,7 @@ pub fn register_embedded_rootfs() {
     {
         // Example: include_bytes!("../../rootfs/rootfs.img");
         // If you create such an image, uncomment registration below.
-        // let img: &'static [u8] = include_bytes!("../../rootfs/rootfs.img");
-        // crate::drivers::disk::register_image("rootfs", img);
+        let img: &'static [u8] = include_bytes!("../../../rootfs/rootfs.img");
+        crate::drivers::disk::register_image("rootfs", img);
     }
 }
